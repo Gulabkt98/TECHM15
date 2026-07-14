@@ -441,33 +441,33 @@ lexguard-ai/
 │
 ├── 📂 backend/                       # FastAPI + Celery
 │   ├── app/
-│   │   ├── api/                      # REST routes (v1)
-│   │   ├── core/                     # config, security, RBAC
-│   │   ├── models/                   # SQLAlchemy ORM
+│   │   ├── main.py                   # FastAPI app factory + router wiring
+│   │   ├── config.py                 # pydantic-settings (all env vars)
+│   │   ├── constants.py              # domain enums: DocumentType, EdgeType, Severity…
+│   │   ├── api/                      # REST routes: auth, upload, contracts,
+│   │   │                             #   graph, risk, compare, chat, reports, health
+│   │   ├── agents/                   # LangGraph agents + supervisor + shared state
+│   │   │   ├── supervisor.py         #   pipeline topology (parse → gate → analyze → report)
+│   │   │   ├── state.py              #   ReviewState shared by all agents
+│   │   │   ├── parser_agent.py · graph_agent.py · rag_agent.py
+│   │   │   ├── risk_agent.py · compliance_agent.py · contradiction_agent.py
+│   │   │   └── citation_agent.py · redline_agent.py · report_agent.py
+│   │   ├── workflows/                # upload / review / comparison / chat orchestration
+│   │   ├── parser/                   # pdf, docx, ocr, sections, clauses, tables, metadata
+│   │   ├── graph/                    # Neo4j builder, SCC cycles, blast radius, Cypher
+│   │   ├── rag/                      # chunker, embeddings, Qdrant store, retriever, reranker
+│   │   ├── risk_engine/              # payment, sla, liability, ip, confidentiality,
+│   │   │                             #   termination, contradictions, scoring
+│   │   ├── compare/                  # MSA↔SOW alignment, clause & version diff
+│   │   ├── reports/                  # executive summary, pdf, json, markdown exports
+│   │   ├── llm/                      # Gemini adapter, prompts, chains, output parser
+│   │   ├── db/                       # Postgres (SQLAlchemy), Neo4j, Qdrant clients + models
 │   │   ├── schemas/                  # Pydantic I/O contracts
-│   │   ├── services/
-│   │   │   ├── parsing/              # PDF/DOCX → clause registry
-│   │   │   ├── graph/                # Neo4j builder, SCC, blast radius
-│   │   │   ├── retrieval/            # Qdrant + BM25 hybrid RAG
-│   │   │   ├── playbook/             # YAML rule engine
-│   │   │   ├── grounding/            # quote verification gate
-│   │   │   ├── redline/              # diff + OOXML tracked changes
-│   │   │   └── audit/                # hash-chained ledger
-│   │   ├── agents/                   # LangGraph agent definitions
-│   │   │   ├── supervisor.py
-│   │   │   ├── parser_agent.py
-│   │   │   ├── clause_intelligence.py
-│   │   │   ├── knowledge_graph.py
-│   │   │   ├── risk_detection.py
-│   │   │   ├── compliance.py
-│   │   │   ├── comparison.py
-│   │   │   ├── citation.py
-│   │   │   ├── redline_agent.py
-│   │   │   └── report_agent.py
-│   │   └── workers/                  # Celery task definitions
-│   ├── playbooks/                    # YAML legal playbooks
-│   │   └── default_enterprise.yaml
-│   └── tests/
+│   │   ├── utils/                    # logger, validators, response envelope, hash chain
+│   │   ├── tests/
+│   │   └── data/                     # uploaded / processed / embeddings / reports
+│   ├── requirements.txt
+│   └── .env.example
 │
 ├── 📂 data/                          # (gitignored) CUAD, LexGLUE, ContractNLI
 ├── 📂 docs/                          # Architecture docs, analysis, assets
