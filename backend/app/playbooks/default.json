@@ -1,0 +1,33 @@
+{
+  "name": "default_enterprise",
+  "version": 1,
+  "perspective": "customer",
+  "rules": {
+    "payment": {
+      "max_payment_days": 45,
+      "preferred_days": 30,
+      "fallback_template": "Customer shall pay all undisputed invoices within thirty (30) days of receipt of a correct invoice."
+    },
+    "liability": {
+      "max_cap_months": 12,
+      "uncapped_is_walk_away": true,
+      "fallback_template": "Each party's aggregate liability under this Agreement shall not exceed the fees paid or payable in the twelve (12) months preceding the event giving rise to the claim."
+    },
+    "sla": {
+      "max_total_credits_pct": 10.0,
+      "fallback_template": "Service credits shall be Customer's sole remedy for service level failures and shall not exceed ten percent (10%) of the monthly fees in aggregate."
+    },
+    "confidentiality": {
+      "min_survival_years": 2,
+      "fallback_template": "The confidentiality obligations shall survive termination of this Agreement for a period of not less than two (2) years."
+    },
+    "termination": {
+      "min_notice_days": 30,
+      "fallback_template": "Either party may terminate this Agreement for convenience upon not less than thirty (30) days' prior written notice."
+    },
+    "ip": {
+      "customer_owns_deliverables": true,
+      "fallback_template": "All Deliverables created under this Agreement shall be the sole and exclusive property of Customer upon payment."
+    }
+  }
+}

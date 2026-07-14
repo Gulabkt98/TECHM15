@@ -1,11 +1,11 @@
-"""MSA vs SOW alignment — the cross-document contradiction surface.
+"""MSA vs SOW alignment — thin façade over the contradiction engine.
 
-Pairs comparable clauses (same clause type / shared defined terms),
-generates contradiction candidates, and hands numeric ones to
-app.risk_engine.contradictions for deterministic confirmation.
+Pairs comparable clauses across the family and returns confirmed
+cross-document contradictions with citations for both sides.
 """
 
+from app.risk_engine.contradictions import find_cross_document_contradictions
 
-async def align_and_compare(msa_id: str, sow_id: str) -> list[dict]:
-    # TODO(compare): clause-type pairing → semantic comparison → candidates.
-    raise NotImplementedError
+
+def align_and_compare(clauses: list[dict], documents_by_id: dict[str, dict]) -> list[dict]:
+    return find_cross_document_contradictions(clauses, documents_by_id)

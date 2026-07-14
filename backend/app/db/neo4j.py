@@ -1,15 +1,15 @@
-"""Neo4j driver management for the legal knowledge graph."""
-
-from neo4j import AsyncDriver, AsyncGraphDatabase
+"""Neo4j driver management (optional feature — lazy import)."""
 
 from app.config import get_settings
 
-_driver: AsyncDriver | None = None
+_driver = None
 
 
-def get_driver() -> AsyncDriver:
+def get_driver():
     global _driver
     if _driver is None:
+        from neo4j import AsyncGraphDatabase  # imported only when the feature is on
+
         settings = get_settings()
         _driver = AsyncGraphDatabase.driver(
             settings.neo4j_uri, auth=(settings.neo4j_user, settings.neo4j_password)

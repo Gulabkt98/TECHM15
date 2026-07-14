@@ -1,16 +1,16 @@
-"""Qdrant client management for clause vector search."""
-
-from qdrant_client import QdrantClient
+"""Qdrant client management (optional feature — lazy import)."""
 
 from app.config import get_settings
 
 CLAUSE_COLLECTION = "lexguard_clauses"
 
-_client: QdrantClient | None = None
+_client = None
 
 
-def get_client() -> QdrantClient:
+def get_client():
     global _client
     if _client is None:
+        from qdrant_client import QdrantClient  # imported only when the feature is on
+
         _client = QdrantClient(url=get_settings().qdrant_url)
     return _client

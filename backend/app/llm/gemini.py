@@ -1,16 +1,46 @@
-"""Gemini 2.5 Pro adapter — the ONLY module that talks to the LLM API.
+"""Gemini adapter — the ONLY module that talks to the LLM API.
 
-Thin by design: agents depend on generate_structured(), so swapping the
-model/provider is a one-file change. Temperature stays low; outputs are
-schema-validated before any agent consumes them.
+The platform is deliberately LLM-optional: every deterministic feature
+works without a key. When GEMINI_API_KEY is set, generate_json() enhances
+clause classification and grounded Q&A. Callers must handle None (the
+adapter never raises on missing key — honesty over crashing).
 """
 
+import json
+
 from app.config import get_settings
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+_client = None
 
 
-async def generate_structured(prompt: str, response_schema: dict) -> dict:
-    """Call Gemini with an enforced JSON schema; return parsed output."""
-    settings = get_settings()
-    # TODO(llm): google-genai client call with response_schema enforcement,
-    # retries with backoff, and token-usage logging for the audit trail.
-    raise NotImplementedError(f"Gemini adapter not wired (model={settings.gemini_model})")
+def available() -> bool:
+    key = get_settings().gemini_api_key
+    return bool(key) and "your-gemini" not in key
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        from google import genai
+
+        _client = genai.Client(api_key=get_settings().gemini_api_key)
+    return _client
+
+
+async def generate_json(prompt: str) -> dict | None:
+    """Call Gemini expecting a JSON object; None when unavailable/failed."""
+    if not available():
+        return None
+    try:
+        response = await _get_client().aio.models.generate_content(
+            model=get_settings().gemini_model,
+            contents=prompt,
+            config={"response_mime_type": "application/json", "temperature": 0.1},
+        )
+        return json.loads(response.text)
+    except Exception as exc:
+        logger.warning(f"Gemini call failed — falling back to deterministic path: {exc}")
+        return None
